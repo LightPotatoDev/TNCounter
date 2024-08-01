@@ -2,6 +2,7 @@ import os
 import sys
 abspath = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(abspath)
+import pandas as pd
 
 from functions import imgProcess
 from functions import itemDictionary
@@ -29,6 +30,11 @@ for name,obj in floors.items():
 #4. read numbers & item
 for name,obj in floors.items():
     obj.get_items()
-    print(obj.item_dict)
     
-#5. get the total
+#5. plug to spreadsheet
+dict_list = [floors[i].item_dict for i in floors.keys()]
+df = pd.DataFrame(dict_list)
+sum_row = pd.DataFrame(df.sum()).T
+df = pd.concat([df, sum_row], ignore_index=True)
+df.insert(0, 'Floor', list(floors.keys()) + ['Total'])
+df.to_excel('TNCount.xlsx', index=False)
