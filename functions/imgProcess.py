@@ -101,8 +101,6 @@ def get_number(img) -> list:
             if prevRes == res[i]:
                 break
             
-            #thepath = ''.join((NUM_TEST_PATH,'\\',str(i),'-',str(j),'.png'))
-            #cropNum.save(thepath)
     return res
 
 ITEM_POINT = (8,13)

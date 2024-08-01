@@ -23,6 +23,10 @@ item_dict = {
     'Immortal potion':0,
     'Continental potion':0,
     'Eternal potion':0,
+    'Ocean ice':0,
+    'Sky-blue ice':0,
+    'Elixir of board kingdom':0,
+    'Drop of shimmering sky':0,
     
     'Yellow key':0,
     'Blue key':0,
@@ -34,17 +38,40 @@ item_dict = {
     'Return key':0,
     'Ice key':0,
     
+    'Old mattock':0,
+    'Mattock':0,
+    'Super mattock':0,
+    'Hyper mattock':0,
+    'Miracle mattock':0,
+    
     'Swap orb':0,
     'Pavement orb':0,
+    'Reclamation orb':0,
+    'Glory orb':0,
+    'Guidance orb':0,
     'Teleport orb':0,
+    'Resurrection orb':0,
     'Reverse orb':0,
     'Blizzard orb':0,
+    'Spring orb':0,
     
     'Golden feather 30%':0,
+    'Golden feather 50%':0,
+    'Golden feather 100%':0,
     'Golden feather x2':0,
-    'Life crown 30%': 0,
-    'Life crown 100%': 0
+    'Life crown 10%':0,
+    'Life crown 20%':0,
+    'Life crown 30%':0,
+    'Life crown 100%':0,
     
+    'Anchor hook 1':0,
+    'Anchor hook 3':0,
+    'Anchor hook 5':0,
+    'Anchor hook 10':0,
+    
+    'Clock hand':0,
+    
+    'Magic elixir':0
 }
 
 item_value_dict = {
