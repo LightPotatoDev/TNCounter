@@ -5,37 +5,30 @@ sys.path.append(abspath)
 
 from functions import imgProcess
 from functions import itemDictionary
+from functions.floorClass import Floor
 
 INPUT_FOLDER_NAME = 'inputItem'
 CROP_FOLDER_NAME = 'itemCut'
 
 #1. read images
-imgs = imgProcess.loadImages(os.path.join(abspath, INPUT_FOLDER_NAME))
+imgs = imgProcess.load_images(os.path.join(abspath, INPUT_FOLDER_NAME), True)
 
-#2. read floor/position data from each image and convert to dict [TODO]
-#imgDict = dict()
+#2. convert to Floor object
+floors = dict()
+for name,img in imgs.items():
+    realname = name.split(' ')[0]
+    if not realname in floors:
+        floors[realname] = Floor(realname)
+    floors[realname].add_image(img)
 
 #3. cut to item pieces
-cuts = []
-for img in imgs:
-    cuts.extend(imgProcess.cutImages(img))
-    
-for idx,img in enumerate(cuts):
-    thepath = ''.join((os.path.join(abspath, CROP_FOLDER_NAME), '\\', str(idx), '.png'))
-    img.save(thepath)
-    
-itemDict = itemDictionary.itemDict
+for name,obj in floors.items():
+    obj.crop()
+    obj.save_crops(os.path.join(abspath, CROP_FOLDER_NAME))
 
 #4. read numbers & item
-for idx,img in enumerate(cuts):
-    item = imgProcess.getItem(img)
-    num = imgProcess.getNumber(img)
-    if item != 'null':
-        itemDict[item] += sum(num)
+for name,obj in floors.items():
+    obj.get_items()
+    print(obj.item_dict)
     
-print('')
-print('Total Static Atk, Def, Hp Gain in Tut1')
-print(itemDictionary.calculate_stats(itemDict))
-print('')
-for item in itemDict:
-    print(f"{item.ljust(30)} {itemDict[item]}")
+#5. get the total

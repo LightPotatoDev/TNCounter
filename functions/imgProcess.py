@@ -4,7 +4,7 @@ import numpy as np
 
 ABSPATH = os.path.abspath(os.path.dirname(__file__))
 
-def loadImages(path,asDict=False):
+def load_images(path,asDict=False) -> list|dict:
     images = []
     imgDict = dict()
 
@@ -31,7 +31,7 @@ SPACING = (1,22)
 INTERFACE_SIZE = (149,38)
 TIMES = (3,7)
 
-def cutImages(img):
+def cut_images(img) -> list:
     cuts = []
     for i in range(TIMES[0]):
         for j in range(TIMES[1]):
@@ -47,26 +47,26 @@ NUM_POINT = ((40,14),(40,27))
 NUM_SIZE = (6,8)
 NUM_SPACING = 6
 NUM_RES_PATH = ''.join((os.path.join(ABSPATH, '..'), '\\resources\\numbers'))
-NUM_IMAGES = loadImages(NUM_RES_PATH)
+NUM_IMAGES = load_images(NUM_RES_PATH)
 NUM_TEST_PATH = ''.join((os.path.join(ABSPATH, '..'), '\\numberCompareTest'))
 NUM_DIFF_TRESHOLD = 96
 #WHITE_TRESHOLD = 128
 
-def addAlpha(img):
+def add_alpha(img) -> Image:
     alpha = Image.new('L', img.size, 255)
     img = img.convert('RGBA')
     img.putalpha(alpha)
     return img
 
-def compareNum(img1, img2):
+def compare_num(img1, img2) -> int:
     if img1.size != img2.size:
         print(img1.size,img2.size)
         raise ValueError("Images must have the same dimensions")
     
     if img1.mode != 'RGBA':
-        img1 = addAlpha(img1)
+        img1 = add_alpha(img1)
     if img2.mode != 'RGBA':
-        img2 = addAlpha(img2)
+        img2 = add_alpha(img2)
         
     img1 = img1.convert('L')
     img2 = img2.convert('L')
@@ -81,7 +81,7 @@ def compareNum(img1, img2):
     #print(error)
     return maxdiff
 
-def getNumber(img):
+def get_number(img) -> list:
     res = [0,0]
     for i in range(2):
         for j in range(3):
@@ -93,7 +93,7 @@ def getNumber(img):
 
             cropNum = img.crop((x1,y1,x2,y2))
             for idx,num in enumerate(NUM_IMAGES):
-                diff = compareNum(cropNum,num)
+                diff = compare_num(cropNum,num)
                 if diff < NUM_DIFF_TRESHOLD:
                     res[i] = 10*res[i]+idx
                     break
@@ -108,18 +108,18 @@ def getNumber(img):
 ITEM_POINT = (8,13)
 ITEM_SIZE = (24,24)
 ITEM_RES_PATH = ''.join((os.path.join(ABSPATH, '..'), '\\resources\\items'))
-ITEM_IMAGES = loadImages(ITEM_RES_PATH,asDict=True)
+ITEM_IMAGES = load_images(ITEM_RES_PATH,asDict=True)
 ITEM_DIFF_TRESHOLD = 12
 
-def compareItem(img1,img2):
+def compare_item(img1,img2) -> int:
     if img1.size != img2.size:
         print(img1.size,img2.size)
         raise ValueError("Images must have the same dimensions")
     
     if img1.mode != 'RGBA':
-        img1 = addAlpha(img1)
+        img1 = add_alpha(img1)
     if img2.mode != 'RGBA':
-        img2 = addAlpha(img2)
+        img2 = add_alpha(img2)
         
     array1 = np.array(img1,dtype=np.int32)
     array2 = np.array(img2,dtype=np.int32)
@@ -133,7 +133,7 @@ def compareItem(img1,img2):
     maxdiff = np.max(diff)
     return maxdiff
 
-def getItem(img):
+def get_item(img) -> str:
     res = 'null'
     x1 = ITEM_POINT[0]
     x2 = x1 + ITEM_SIZE[0]
@@ -143,7 +143,7 @@ def getItem(img):
     cropItem = img.crop((x1,y1,x2,y2))
     
     for name,itemImg in ITEM_IMAGES.items():
-        diff = compareItem(cropItem,itemImg)
+        diff = compare_item(cropItem,itemImg)
         if diff < ITEM_DIFF_TRESHOLD:
             res = name
             break

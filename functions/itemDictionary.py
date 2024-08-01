@@ -1,4 +1,4 @@
-itemDict = {
+item_dict = {
     'Power piece':0,
     'Power gem':0,
     'Power potion':0,
@@ -47,7 +47,7 @@ itemDict = {
     
 }
 
-itemValueDict = {
+item_value_dict = {
     #atk, def, hp
     'Power piece':(1,0,0),
     'Power gem':(2,0,0),
@@ -73,7 +73,7 @@ itemValueDict = {
 
 def calculate_stats(itemAmount):
     stats = [0,0,0]
-    for name,value in itemValueDict.items():
+    for name,value in item_value_dict.items():
         for i in range(3):
             stats[i] += itemAmount[name]*value[i]
             
