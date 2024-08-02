@@ -1,10 +1,12 @@
 import os
 from PIL import Image
 import numpy as np
+import pickle
 
 ABSPATH = os.path.abspath(os.path.dirname(__file__))
+RES_PATH = ''.join((os.path.join(ABSPATH, '..'), '\\resources'))
 
-def load_images(path,asDict=False) -> list|dict:
+def load_images(path,as_dict=False) -> list|dict:
     images = []
     imgDict = dict()
 
@@ -13,7 +15,7 @@ def load_images(path,asDict=False) -> list|dict:
         if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
             try:
                 with Image.open(filepath) as img:
-                    if not asDict:
+                    if not as_dict:
                         images.append(img.copy())
                     else:
                         name = filename.split('.')[0]
@@ -21,36 +23,55 @@ def load_images(path,asDict=False) -> list|dict:
             except Exception as e:
                 print(f'Error loading image {filename}:{e}')
 
-    if not asDict:
+    if not as_dict:
         return images
     else:
         return imgDict
-
-START_POINT = (3,40)
-SPACING = (1,22)
-INTERFACE_SIZE = (149,38)
-TIMES = (3,7)
+    
+def load_number_images() -> list:
+    NUMBER_IMG_PATH = ''.join((RES_PATH, '\\numbers'))
+    NUMBER_PKL_PATH = ''.join((RES_PATH, '\\numbers_img.pkl'))
+    images:dict = dict()
+    if os.path.exists(NUMBER_PKL_PATH):
+        with open(NUMBER_PKL_PATH, 'rb') as f:
+            images = pickle.load(f)
+        return images
+    else:
+        images = load_images(NUMBER_IMG_PATH, as_dict = True)
+        with open(NUMBER_PKL_PATH, 'wb') as f:
+            pickle.dump(images, f)
+        return images
+        
+def load_item_images() -> dict:
+    ITEM_IMG_PATH = ''.join((RES_PATH, '\\items'))
+    ITEM_PKL_PATH = ''.join((RES_PATH, '\\items_img.pkl'))
+    images:dict = dict()
+    if os.path.exists(ITEM_PKL_PATH):
+        with open(ITEM_PKL_PATH, 'rb') as f:
+            images = pickle.load(f)
+        return images
+    else:
+        images = load_images(ITEM_IMG_PATH, as_dict = True)
+        with open(ITEM_PKL_PATH, 'wb') as f:
+            pickle.dump(images, f)
+        return images
 
 def cut_images(img) -> list:
+    START_POINT = (3,40)
+    SPACING = (1,22)
+    IMAGE_SIZE = (149,38)
+    TIMES = (3,7)
+    
     cuts = []
     for i in range(TIMES[0]):
         for j in range(TIMES[1]):
-            x1 = START_POINT[0] + SPACING[0]*i + INTERFACE_SIZE[0]*i
-            x2 = x1 + INTERFACE_SIZE[0]
-            y1 = START_POINT[1] + SPACING[1]*j + INTERFACE_SIZE[1]*j
-            y2 = y1 + INTERFACE_SIZE[1]
+            x1 = START_POINT[0] + SPACING[0]*i + IMAGE_SIZE[0]*i
+            x2 = x1 + IMAGE_SIZE[0]
+            y1 = START_POINT[1] + SPACING[1]*j + IMAGE_SIZE[1]*j
+            y2 = y1 + IMAGE_SIZE[1]
             cuts.append(img.crop((x1,y1,x2,y2)))
 
     return cuts
-
-NUM_POINT = ((40,14),(40,27))
-NUM_SIZE = (6,8)
-NUM_SPACING = 6
-NUM_RES_PATH = ''.join((os.path.join(ABSPATH, '..'), '\\resources\\numbers'))
-NUM_IMAGES = load_images(NUM_RES_PATH)
-NUM_TEST_PATH = ''.join((os.path.join(ABSPATH, '..'), '\\numberCompareTest'))
-NUM_DIFF_TRESHOLD = 96
-#WHITE_TRESHOLD = 128
 
 def add_alpha(img) -> Image:
     alpha = Image.new('L', img.size, 255)
@@ -75,27 +96,30 @@ def compare_num(img1, img2) -> int:
     array2 = np.array(img2,dtype=np.int32)
 
     diff = np.abs(array1 - array2)
-    #diff[array2 < WHITE_TRESHOLD] = 0
     maxdiff = np.max(diff)
-    #error = np.sum(np.square(diff))
-    #print(error)
     return maxdiff
 
 def get_number(img) -> list:
+    START_POINT = ((40,14),(40,27))
+    IMAGE_SIZE = (6,8)
+    SPACING = 6
+    DIFF_TRESHOLD = 96
+    NUM_IMAGES:dict = load_number_images()
+    
     res = [0,0]
     for i in range(2):
         for j in range(3):
             prevRes = res[i]
-            x1 = NUM_POINT[i][0] + NUM_SPACING*j
-            x2 = x1 + NUM_SIZE[0]
-            y1 = NUM_POINT[i][1]
-            y2 = y1 + NUM_SIZE[1]
+            x1 = START_POINT[i][0] + SPACING*j
+            x2 = x1 + IMAGE_SIZE[0]
+            y1 = START_POINT[i][1]
+            y2 = y1 + IMAGE_SIZE[1]
 
             cropNum = img.crop((x1,y1,x2,y2))
-            for idx,num in enumerate(NUM_IMAGES):
+            for idx,num in NUM_IMAGES.items():
                 diff = compare_num(cropNum,num)
-                if diff < NUM_DIFF_TRESHOLD:
-                    res[i] = 10*res[i]+idx
+                if diff < DIFF_TRESHOLD:
+                    res[i] = 10*res[i]+int(idx)
                     break
             
             if prevRes == res[i]:
@@ -103,13 +127,9 @@ def get_number(img) -> list:
             
     return res
 
-ITEM_POINT = (8,13)
-ITEM_SIZE = (24,24)
-ITEM_RES_PATH = ''.join((os.path.join(ABSPATH, '..'), '\\resources\\items'))
-ITEM_IMAGES = load_images(ITEM_RES_PATH,asDict=True)
-ITEM_DIFF_TRESHOLD = 12
-
 def compare_item(img1,img2) -> int:
+    IMAGE_SIZE = (24,24)
+    
     if img1.size != img2.size:
         print(img1.size,img2.size)
         raise ValueError("Images must have the same dimensions")
@@ -123,8 +143,8 @@ def compare_item(img1,img2) -> int:
     array2 = np.array(img2,dtype=np.int32)
     
     diff = np.abs(array1 - array2)
-    for i in range(ITEM_SIZE[0]):
-        for j in range(ITEM_SIZE[1]):
+    for i in range(IMAGE_SIZE[0]):
+        for j in range(IMAGE_SIZE[1]):
             if array2[i][j][3] == 0:
                 diff[i][j] = 0
                 
@@ -132,11 +152,16 @@ def compare_item(img1,img2) -> int:
     return maxdiff
 
 def get_item(img) -> str:
+    START_POINT = (8,13)
+    IMAGE_SIZE = (24,24)
+    ITEM_DIFF_TRESHOLD = 12
+    ITEM_IMAGES = load_item_images()
+    
     res = 'null'
-    x1 = ITEM_POINT[0]
-    x2 = x1 + ITEM_SIZE[0]
-    y1 = ITEM_POINT[1]
-    y2 = y1 + ITEM_SIZE[1]
+    x1 = START_POINT[0]
+    x2 = x1 + IMAGE_SIZE[0]
+    y1 = START_POINT[1]
+    y2 = y1 + IMAGE_SIZE[1]
 
     cropItem = img.crop((x1,y1,x2,y2))
     

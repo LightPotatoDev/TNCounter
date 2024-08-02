@@ -1,5 +1,5 @@
-from . import itemDictionary
-from . import imgProcess
+from . import item_dictionary
+from . import img_process
 import copy
 
 class Room:
@@ -7,14 +7,14 @@ class Room:
         self.name = name
         self.images = []
         self.crops = []
-        self.item_dict = copy.deepcopy(itemDictionary.item_dict)
+        self.item_dict = copy.deepcopy(item_dictionary.item_dict)
         
     def add_image(self,img):
         self.images.append(img)
         
     def crop(self):
         for img in self.images:
-            self.crops.extend(imgProcess.cut_images(img))
+            self.crops.extend(img_process.cut_images(img))
             
     def save_crops(self,path):
         for i,x in enumerate(self.crops):
@@ -23,7 +23,7 @@ class Room:
             
     def get_items(self):
         for idx,img in enumerate(self.crops):
-            item = imgProcess.get_item(img)
-            num = imgProcess.get_number(img)
+            item = img_process.get_item(img)
+            num = img_process.get_number(img)
             if item != 'null':
                 self.item_dict[item] += sum(num)
