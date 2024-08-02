@@ -9,8 +9,8 @@ from functions.room_class import Room
 from functions.make_dataframe import make_tactical_df
 from functions.edit_sheet import edit_tactical_sheet
 
-INPUT_FOLDER_NAME = 'inputItem'
-CROP_FOLDER_NAME = 'itemCut'
+INPUT_FOLDER_NAME = 'input_item'
+CROP_FOLDER_NAME = 'item_cut'
 
 #1. read images
 imgs = img_process.load_images(os.path.join(abspath, INPUT_FOLDER_NAME))
