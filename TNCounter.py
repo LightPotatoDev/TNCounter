@@ -6,8 +6,8 @@ sys.path.append(abspath)
 from functions import img_process
 from functions import item_dictionary
 from functions.room_class import Room
-from functions.make_dataframe import make_tactical_df
-from functions.edit_sheet import edit_tactical_sheet
+from functions.make_dataframe import make_tactical_df, make_extra_df
+from functions.make_sheet import make_tactical_sheet
 
 INPUT_FOLDER_NAME = 'input_item'
 CROP_FOLDER_NAME = 'item_cut'
@@ -30,10 +30,9 @@ for name,obj in rooms.items():
     obj.get_items()
     
 #4. make some dataframe
-dict_list = [rooms[i].item_dict for i in rooms.keys()]
+dict_list = [rooms[i].item_amount_dict for i in rooms.keys()]
 df = make_tactical_df(dict_list,list(rooms.keys()))
-excel_file = 'TNCount.xlsx'
-df.to_excel(excel_file, index=True)
+extra_df = make_extra_df(df)
 
-#5. modify spreadsheet
-edit_tactical_sheet(excel_file)
+#5. make a spreadsheet
+make_tactical_sheet(df, extra_df)

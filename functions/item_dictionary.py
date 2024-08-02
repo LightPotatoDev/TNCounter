@@ -1,4 +1,6 @@
-item_dict = {
+#i should probably make this pickle or JSON or smth
+
+item_amount_dict = {
     'Power piece':0,
     'Power gem':0,
     'Power potion':0,
@@ -75,33 +77,30 @@ item_dict = {
 }
 
 item_value_dict = {
-    #atk, def, hp
-    'Power piece':(1,0,0),
-    'Power gem':(2,0,0),
-    'Power potion':(3,0,300),
-    'Power card':(5,0,0),
-    'Power deck':(15,0,0),
-    'Pulse book [Sword]':(50,0,0),
+    'Power piece':              {'Atk':1},
+    'Power gem':                {'Atk':2},
+    'Power potion':             {'Atk':3, 'Hp':300},
+    'Power card':               {'Atk':5},
+    'Power deck':               {'Atk':15},
+    'Pulse book [Sword]':       {'Atk':50},
     
-    'Guard piece':(0,1,0),
-    'Guard gem':(0,2,0),
-    'Guard potion':(0,3,300),
-    'Guard card':(0,5,0),
-    'Guard deck':(0,15,0),
-    'Pulse book [Shield]':(0,50,0),
+    'Guard piece':              {'Def':1},
+    'Guard gem':                {'Def':2},
+    'Guard potion':             {'Def':3, 'Hp':300},
+    'Guard card':               {'Def':5},
+    'Guard deck':               {'Def':15},
+    'Pulse book [Shield]':      {'Def':50},
     
-    'Red potion':(0,0,200),
-    'Blue potion':(0,0,800),
-    'Life potion':(0,0,2000),
-    'Heavenly potion':(3,3,3000),
-    'Drop of dream ocean':(5,5,10000), #disclaimer: 10000 instead of 9999 for better readability
-    'Immortal potion':(15,15,50000),
+    'Red potion':               {'Hp':200},
+    'Blue potion':              {'Hp':800},
+    'Life potion':              {'Hp':2000},
+    'Heavenly potion':          {'Atk':3, 'Def':3, 'Hp':3000},
+    'Drop of dream ocean':      {'Atk':5, 'Def':5, 'Hp':10000}, #disclaimer: 10000 instead of 9999 for better readability
+    'Immortal potion':          {'Atk':15, 'Def':15, 'Hp':50000},
+    
+    'Old mattock':              {'Mattock':5},
+    'Mattock':                  {'Mattock':10},
+    'Super mattock':            {'Mattock':20},
+    'Hyper mattock':            {'Mattock':40},
+    'Miracle mattock':          {'Mattock':99}
 }
-
-def calculate_stats(itemAmount):
-    stats = [0,0,0]
-    for name,value in item_value_dict.items():
-        for i in range(3):
-            stats[i] += itemAmount[name]*value[i]
-            
-    return stats
