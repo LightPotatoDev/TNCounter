@@ -3,13 +3,21 @@ import re
 
 def natural_sort(x): 
     if x == 'Total':
-        return ('!',0) #push the total row to the first row
-    prefix, num = '',int(re.search(r'\d+', x).group())
+        return ('!',0,0) #push the total row to the first row
+    prefix, n1, n2 = '', 0, 0
+
     if x[0].isnumeric():
         prefix = '@'
     else:
         prefix = x[0]
-    return (prefix,num)
+        
+    numbers = re.findall(r'\d+', x)
+    if len(numbers) == 1:
+        n1 = int(numbers[0])
+    if len(numbers) == 2:
+        n1, n2 = int(numbers[0]), int(numbers[1])
+        
+    return (prefix,n1,n2)
         
 
 def make_tactical_df(dict_list,idx):
