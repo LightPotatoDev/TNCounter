@@ -6,29 +6,22 @@ import pickle
 ABSPATH = os.path.abspath(os.path.dirname(__file__))
 RES_PATH = ''.join((os.path.join(ABSPATH, '..'), '\\resources'))
 
-def load_images(path,as_dict=False) -> list|dict:
-    images = []
-    imgDict = dict()
+def load_images(path) -> dict:
+    img_dict = dict()
 
     for filename in os.listdir(path):
         filepath = os.path.join(path, filename)
         if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
             try:
                 with Image.open(filepath) as img:
-                    if not as_dict:
-                        images.append(img.copy())
-                    else:
-                        name = filename.split('.')[0]
-                        imgDict[name] = img.copy()
+                    name = filename.split('.')[0]
+                    img_dict[name] = img.copy()
             except Exception as e:
                 print(f'Error loading image {filename}:{e}')
 
-    if not as_dict:
-        return images
-    else:
-        return imgDict
-    
-def load_number_images() -> list:
+    return img_dict
+
+def load_number_images() -> dict:
     NUMBER_IMG_PATH = ''.join((RES_PATH, '\\numbers'))
     NUMBER_PKL_PATH = ''.join((RES_PATH, '\\numbers_img.pkl'))
     images:dict = dict()
@@ -37,7 +30,7 @@ def load_number_images() -> list:
             images = pickle.load(f)
         return images
     else:
-        images = load_images(NUMBER_IMG_PATH, as_dict = True)
+        images = load_images(NUMBER_IMG_PATH)
         with open(NUMBER_PKL_PATH, 'wb') as f:
             pickle.dump(images, f)
         return images
@@ -51,7 +44,7 @@ def load_item_images() -> dict:
             images = pickle.load(f)
         return images
     else:
-        images = load_images(ITEM_IMG_PATH, as_dict = True)
+        images = load_images(ITEM_IMG_PATH)
         with open(ITEM_PKL_PATH, 'wb') as f:
             pickle.dump(images, f)
         return images
@@ -116,8 +109,8 @@ def get_number(img) -> list:
             y2 = y1 + IMAGE_SIZE[1]
 
             cropNum = img.crop((x1,y1,x2,y2))
-            for idx,num in NUM_IMAGES.items():
-                diff = compare_num(cropNum,num)
+            for idx,num_img in NUM_IMAGES.items():
+                diff = compare_num(cropNum,num_img)
                 if diff < DIFF_TRESHOLD:
                     res[i] = 10*res[i]+int(idx)
                     break

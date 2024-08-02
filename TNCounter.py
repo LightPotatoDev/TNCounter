@@ -13,7 +13,7 @@ INPUT_FOLDER_NAME = 'inputItem'
 CROP_FOLDER_NAME = 'itemCut'
 
 #1. read images
-imgs = img_process.load_images(os.path.join(abspath, INPUT_FOLDER_NAME), True)
+imgs = img_process.load_images(os.path.join(abspath, INPUT_FOLDER_NAME))
 
 #2. convert to Room object
 rooms = dict()
