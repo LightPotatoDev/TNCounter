@@ -13,9 +13,11 @@ INPUT_FOLDER_NAME = 'input_item'
 CROP_FOLDER_NAME = 'item_cut'
 
 #1. read images
+print('reading images...')
 imgs = img_process.load_images(os.path.join(abspath, INPUT_FOLDER_NAME))
 
 #2. convert to Room object
+print('converting images to room objects...')
 rooms = dict()
 for name,img in imgs.items():
     realname = name.split(' ')[0]
@@ -25,14 +27,16 @@ for name,img in imgs.items():
 
 #3. cut to item pieces & read numbers and items
 for name,obj in rooms.items():
+    print(f'reading numbers and items... {name}' , end='\r')
     obj.crop()
     obj.save_crops(os.path.join(abspath, CROP_FOLDER_NAME))
     obj.get_items()
     
-#4. make some dataframe
+#4. make some dataframe and sheet
+print('\ngenerating xlsx file...')
 dict_list = [rooms[i].item_amount_dict for i in rooms.keys()]
 df = make_tactical_df(dict_list,list(rooms.keys()))
 extra_df = make_extra_df(df)
-
-#5. make a spreadsheet
 make_tactical_sheet(df, extra_df)
+
+print('done!')
