@@ -7,7 +7,7 @@ class Room:
         self.name = name
         self.images = []
         self.crops = []
-        self.item_dict = copy.deepcopy(item_dictionary.item_dict)
+        self.item_amount_dict = copy.deepcopy(item_dictionary.item_amount_dict)
         
     def add_image(self,img):
         self.images.append(img)
@@ -26,4 +26,4 @@ class Room:
             item = img_process.get_item(img)
             num = img_process.get_number(img)
             if item != 'null':
-                self.item_dict[item] += sum(num)
+                self.item_amount_dict[item] = sum(num)

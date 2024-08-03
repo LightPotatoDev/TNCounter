@@ -147,7 +147,7 @@ def compare_item(img1,img2) -> int:
 def get_item(img) -> str:
     START_POINT = (8,13)
     IMAGE_SIZE = (24,24)
-    ITEM_DIFF_TRESHOLD = 12
+    ITEM_DIFF_TRESHOLD = 20
     ITEM_IMAGES = load_item_images()
     
     res = 'null'
